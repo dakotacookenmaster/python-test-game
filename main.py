@@ -1,5 +1,8 @@
-import pygame, sys
+import pygame
+import sys
+import random
 from box import Box
+from direction import Direction
 pygame.init()
 
 # COLORS
@@ -19,7 +22,11 @@ SIZE = WIDTH, HEIGHT = 500, 500
 # Initializes the screen
 SCREEN = pygame.display.set_mode(SIZE)
 
-SimonsBox = Box(SCREEN, GREEN, 100, 100, 200, 200)
+PONG = Box(SCREEN, WHITE, 245, 245, 10, 10)
+PONG_DIRECTION = Direction.RIGHT
+PLAYER_ONE = Box(SCREEN, WHITE, 60, 220, 15, 60)
+PLAYER_TWO = Box(SCREEN, WHITE, 425, 220, 15, 60)
+MOVE_DISTANCE = 5
 
 fpsClock = pygame.time.Clock()
 
@@ -28,27 +35,56 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-        # elif event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_UP:
-        #         SimonsBox.move_up(5)
-        #     elif event.key == pygame.K_DOWN:
-        #         SimonsBox.move_down(5)
+
+    # Checking for the players key presses
     keys = pygame.key.get_pressed()
+    if keys[pygame.K_w]:
+        PLAYER_ONE.move_up(MOVE_DISTANCE)
+    if keys[pygame.K_s]:
+        PLAYER_ONE.move_down(MOVE_DISTANCE)
     if keys[pygame.K_UP]:
-        SimonsBox.move_up(5)
-    elif keys[pygame.K_DOWN]:
-        SimonsBox.move_down(5)
-    elif keys[pygame.K_RIGHT]:
-        SimonsBox.move_right(5)
-    elif keys[pygame.K_LEFT]:
-        SimonsBox.move_left(5)
+        PLAYER_TWO.move_up(MOVE_DISTANCE)
+    if keys[pygame.K_DOWN]:
+        PLAYER_TWO.move_down(MOVE_DISTANCE)
 
-    SCREEN.fill(PURPLE)
+    ### Pong Movement ###
 
-    SimonsBox.tick()
+    # move right
+    if PONG_DIRECTION == Direction.RIGHT:
+        if PONG.x + PONG.width == PONG.surface_width:
+            PONG_DIRECTION = random.choice(
+                [Direction.LEFT, Direction.DOWN_AND_LEFT, Direction.UP_AND_LEFT])
+        else:
+            PONG.move_right(MOVE_DISTANCE)
+    # move left
+    elif PONG_DIRECTION == Direction.LEFT:
+        if PONG.x == 0:
+            PONG_DIRECTION = random.choice(
+                [Direction.RIGHT, Direction.DOWN_AND_RIGHT, Direction.UP_AND_RIGHT])
+        else:
+            PONG.move_left(MOVE_DISTANCE)
+    # move down + left
+    elif PONG_DIRECTION == Direction.DOWN_AND_LEFT:
+        if PONG.y + PONG.height == PONG.surface_height:
+            PONG_DIRECTION = random.choice(
+                [Direction.LEFT, Direction.UP_AND_LEFT, Direction.UP_AND_RIGHT])
+        else:
+            PONG.move_left(MOVE_DISTANCE)
+            PONG.move_down(MOVE_DISTANCE)
+    # move up + left
+    elif PONG_DIRECTION == Direction.UP_AND_LEFT:
+        if PONG.y == 0 or PONG.x == 0:
+            PONG_DIRECTION = random.choice(
+                [Direction.RIGHT, Direction.UP_AND_RIGHT, Direction.DOWN_AND_RIGHT])
+        else:
+            PONG.move_left(MOVE_DISTANCE)
+            PONG.move_up(MOVE_DISTANCE)
+
+    SCREEN.fill(BLACK)
+
+    PONG.tick()
+    PLAYER_ONE.tick()
+    PLAYER_TWO.tick()
 
     fpsClock.tick(FPS)
     pygame.display.update()
-
-
-    

@@ -24,22 +24,22 @@ class Box:
             self.y = 0
 
     def move_down(self, amount):
-        if(self.y + self.height < self.surface_height):
+        if(self.y + self.height + amount < self.surface_height):
             self.y += amount
         else:
             self.y = self.surface_height - self.height
 
     def move_right(self, amount):
-        if(self.x + self.width < self.surface_width):
+        if(self.x + self.width + amount < self.surface_width):
             self.x += amount
         else:
             self.x = self.surface_width - self.width
 
     def move_left(self, amount):
-        if(self.x - amount < 0):
-            self.x = 0
-        else:
+        if(self.x - amount > 0):
             self.x -= amount
+        else:
+            self.x = 0
 
 
     

@@ -10,9 +10,11 @@ class Box:
         self.height = height
         self.border = border
         self.surface_width, self.surface_height = surface.get_size()
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def paint(self):
-        pygame.draw.rect(self.surface, self.color, ((self.x, self.y), (self.width, self.height)), self.border)
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        pygame.draw.rect(self.surface, self.color, self.rect, self.border)
 
     def tick(self):
         self.paint()
